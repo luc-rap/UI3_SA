@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import math
 import numpy
 
+
 def vzdialenost(mesto_1, mesto_2):
     d = math.sqrt((mesto_1[0] - mesto_2[0])**2 + (mesto_1[1]-mesto_2[1])**2)
     return d
@@ -20,29 +21,34 @@ def vzdialenost_cesty(cesta):
             dlzka_cesty += vzdialenost(mesto_1, mesto_2)
     return dlzka_cesty
 
+
 def simulovane_zihanie(zoznam_miest):
     cena = vzdialenost_cesty(zoznam_miest)
     #print(cena)
-    teplota = 300 # nastavit
-    factor = 0.9995 # alfa faktor a.k.a. coolinf factor
+    teplota = 200 # nastavit
+    factor = 0.9999 # alfa faktor a.k.a. cooling factor
 
     for i in range(1000):
         print(i, cena)
-        teplota *= factor
-        for j in range(400): # nastavit
-            # vymen dve nahodne suradnice
+        for j in range(100): # nastavit -> cim vacsie cislo, tym treba menej iteracii, dlho to trva, geenruje to vela moznosti
+            # ale vygeneruje sa viac a nebudu sa stale pohybovat v tom istom
+            # ak je cislo male, treba nastavit viac iteracii, konieckoncov sa potom aj tak vyskusa vela moznosti
+                # vymen dve nahodne suradnice
             s1, s2 = numpy.random.randint(0, len(zoznam_miest), size=2)
             zoznam_miest[s1], zoznam_miest[s2] = zoznam_miest[s2], zoznam_miest[s1]
             cena_nova = vzdialenost_cesty(zoznam_miest)
 
             if cena_nova < cena:
                 cena = cena_nova
-            else:
+            else: # ak nova cena nie je lepsia, tak s nejakou pravdepodobnostou si ju aj tak mozem vybrat
                 x = numpy.random.uniform() # " transition probability " - probability of transitioning from one state to another in a single step
-                if x < numpy.exp((cena-cena_nova) / teplota): # pravdepdobnost ze prijme riesenie. cim je mensia teplota, s tym mensou p prijme nove riesenia
+                if x < numpy.exp((cena-cena_nova) / teplota): # pravdepdobnost ze prijme riesenie
                     cena = cena_nova
                 else: # ked neprijme riesenie, vratime naspat, skusame znovu
                     zoznam_miest[s1], zoznam_miest[s2] = zoznam_miest[s2], zoznam_miest[s1]
+
+        teplota *= factor
+
 
     return zoznam_miest
 
