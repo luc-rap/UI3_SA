@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import math
 import numpy
 
-
 def vzdialenost(mesto_1, mesto_2):
     d = math.sqrt((mesto_1[0] - mesto_2[0])**2 + (mesto_1[1]-mesto_2[1])**2)
     return d
@@ -24,14 +23,13 @@ def vzdialenost_cesty(cesta):
 def simulovane_zihanie(zoznam_miest):
     cena = vzdialenost_cesty(zoznam_miest)
     #print(cena)
-    teplota = 30
-    factor = 0.9995 # alfa faktor
-    t_initial = teplota
+    teplota = 300 # nastavit
+    factor = 0.9995 # alfa faktor a.k.a. coolinf factor
 
-    for i in range(1500):
+    for i in range(1000):
         print(i, cena)
         teplota *= factor
-        for j in range(50):
+        for j in range(400): # nastavit
             # vymen dve nahodne suradnice
             s1, s2 = numpy.random.randint(0, len(zoznam_miest), size=2)
             zoznam_miest[s1], zoznam_miest[s2] = zoznam_miest[s2], zoznam_miest[s1]
@@ -40,53 +38,25 @@ def simulovane_zihanie(zoznam_miest):
             if cena_nova < cena:
                 cena = cena_nova
             else:
-                x = numpy.random.uniform()
-                if x < numpy.exp((cena-cena_nova) / teplota): # pravdepdobnost ze prijme riesenie
+                x = numpy.random.uniform() # " transition probability " - probability of transitioning from one state to another in a single step
+                if x < numpy.exp((cena-cena_nova) / teplota): # pravdepdobnost ze prijme riesenie. cim je mensia teplota, s tym mensou p prijme nove riesenia
                     cena = cena_nova
-                else:
+                else: # ked neprijme riesenie, vratime naspat, skusame znovu
                     zoznam_miest[s1], zoznam_miest[s2] = zoznam_miest[s2], zoznam_miest[s1]
 
     return zoznam_miest
 
 
 if __name__ == '__main__':
-    pocet_miest = 20
+    #pocet_miest = 52
     zoznam_miest = []
-    generacie = 1000
-    fitness_celkovo = []
-    #with open('berlin52.txt', 'r') as f:
-        #for row in f:
-           # x, y = row.strip().split()
+    #generacie = 1000
+    #fitness_celkovo = []
+    with open('wi29.txt', 'r') as f:
+        for row in f:
+            x, y = row.strip().split()
             #zoznam_miest.append((int(x), int(y)))
-    #print(zoznam_miest)
-
-    # for i in range(0, pocet_miest):
-    # x = int(random.random() * 200)
-    # y = int(random.random() * 200)
-     #zoznam_miest.append((x, y))
-    zoznam_miest.append((60, 200))
-    zoznam_miest.append((180, 200))
-    zoznam_miest.append((100, 180))
-    zoznam_miest.append((140, 180))
-    zoznam_miest.append((20, 160))
-    zoznam_miest.append((80 ,160))
-    zoznam_miest.append((200 ,160))
-    zoznam_miest.append((140 ,140))
-    zoznam_miest.append((40 ,120))
-    zoznam_miest.append((120 ,120))
-    zoznam_miest.append((180 ,100))
-    zoznam_miest.append((60 ,80))
-    zoznam_miest.append((100 ,80))
-    zoznam_miest.append((180 ,60))
-    zoznam_miest.append((20 ,40))
-    zoznam_miest.append((100 ,40))
-    zoznam_miest.append((200 ,40))
-    zoznam_miest.append((20 ,20))
-    zoznam_miest.append((60 ,20))
-    zoznam_miest.append((160 ,20))
-
-
-    #populacia = vytvor_populaciu(zoznam_miest, 100)
+            zoznam_miest.append((float(x), float(y)))
     #print(zoznam_miest)
 
     fig = plt.figure(figsize=(10, 5))
